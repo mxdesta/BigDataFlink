@@ -107,6 +107,23 @@ services:
     networks:
       - flink-network
 
+  flink-etl:
+    build:
+      context: .
+      dockerfile: Dockerfile.flink
+    container_name: flink-etl
+    depends_on:
+      - kafka
+      - postgres
+      - kafka-producer
+    command: >
+      bash -c "sleep 45 && python3 /opt/flink/jobs/streaming_etl.py"
+    volumes:
+      - ./flink-jobs:/opt/flink/jobs
+    networks:
+      - flink-network
+    restart: on-failure
+
 networks:
   flink-network:
     driver: bridge
